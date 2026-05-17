@@ -1,3 +1,8 @@
+<p align="center">
+  <img src="assets/social-card.png" alt="LUMI — Lightweight Unified Markup Interface" width="640">
+</p>
+
+
 # Lumi
 
 > **Escreva menos, faça mais.**  
