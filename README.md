@@ -3,8 +3,6 @@
 </p>
 
 
-# Lumi
-
 > **Escreva menos, faça mais.**  
 > Uma linguagem de marcação leve que compila para HTML.
 
@@ -14,7 +12,11 @@
 
 1. [O que é Lumi?](#o-que-é-lumi)
 2. [Instalação](#instalação)
+   - [LumiC (CLI)](#lumic-cli)
+   - [LumiJS (Navegador)](#lumijs-navegador)
 3. [Início Rápido](#início-rápido)
+   - [Via linha de comando](#via-linha-de-comando)
+   - [Via navegador](#via-navegador)
 4. [Referência da Linguagem](#referência-da-linguagem)
    - [Diretivas Meta](#diretivas-meta-)
    - [Títulos](#títulos)
@@ -28,7 +30,8 @@
    - [Regra Horizontal](#regra-horizontal)
    - [Links](#links)
 5. [Uso da Ferramenta (CLI)](#uso-da-ferramenta-cli)
-6. [Guia do Desenvolvedor](#guia-do-desenvolvedor)
+6. [LumiJS — Compilador para Navegador](#lumijs--compilador-para-navegador)
+7. [Guia do Desenvolvedor](#guia-do-desenvolvedor)
 
 ---
 
@@ -36,7 +39,8 @@
 
 Lumi (`.lm`) é uma linguagem de marcação de texto simples, projetada para ser
 **fácil de ler e escrever** em qualquer editor de texto. Um arquivo `.lm` é
-compilado pelo programa `lumic` em um documento HTML completo.
+compilado em um documento HTML completo, seja via ferramenta de linha de comando
+(`lumic`) ou diretamente no navegador (`LumiJS`).
 
 **Comparação rápida:**
 
@@ -61,30 +65,44 @@ de estilo CSS, fontes e estrutura que já conhece.
 
 ## Instalação
 
-### Requisitos
+### LumiC (CLI)
+
+#### Requisitos
 
 - Compilador C++17 (`g++` ≥ 7 ou `clang++` ≥ 5)
 - `make`
 
-### Compilar o lumic
+#### Compilar o lumic
 
 ```bash
-git clone <repositório>
-cd lumic
+git clone https://github.com/hot-potattoes/Lumi
+cd Lumi/lumic
 make
 ```
 
-O executável `lumic` será criado na raiz do projeto.
+O executável `lumic` será criado no diretório `lumic/`.
 
-### Instalação global (opcional)
+#### Instalação global (opcional)
 
 ```bash
 sudo make install     # copia lumic para /usr/local/bin
 ```
 
+### LumiJS (Navegador)
+
+Nenhuma instalação é necessária. Basta incluir o script na página HTML:
+
+```html
+<script src="https://cdn.jsdelivr.net/gh/hot-potattoes/Lumi@main/lumi-js/lumi-js.js"></script>
+```
+
+Ou baixe o arquivo `lumi-js/lumi-js.js` do repositório e referencie localmente.
+
 ---
 
 ## Início Rápido
+
+### Via linha de comando
 
 Crie `meu-doc.lm`:
 
@@ -111,6 +129,26 @@ Compile:
 ```
 
 Abra `meu-doc.html` no navegador. Pronto.
+
+### Via navegador
+
+Crie `index.html`:
+
+```html
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <script src="lumi-js/lumi-js.js"></script>
+</head>
+<body>
+  <lumi-doc src="meu-doc.lm"></lumi-doc>
+</body>
+</html>
+```
+
+Abra `index.html` no navegador. O documento Lumi será compilado e renderizado
+automaticamente, sem necessidade de pré-compilação.
 
 ---
 
@@ -452,22 +490,100 @@ Erros são escritos em `stderr`. O código de saída é `0` em caso de sucesso e
 
 ---
 
+## LumiJS — Compilador para Navegador
+
+LumiJS é a implementação JavaScript do compilador Lumi, localizada no diretório
+`lumi-js/` do repositório. Permite renderizar documentos `.lm` diretamente no
+navegador, sem etapa de pré-compilação, através do Web Component `<lumi-doc>`.
+
+### Uso básico
+
+```html
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <script src="lumi-js/lumi-js.js"></script>
+</head>
+<body>
+  <lumi-doc src="documento.lm"></lumi-doc>
+</body>
+</html>
+```
+
+O elemento `<lumi-doc>` carrega o arquivo `.lm`, compila para HTML e renderiza
+no lugar do conteúdo da página.
+
+### Conteúdo inline
+
+Também é possível escrever Lumi diretamente dentro da tag:
+
+```html
+<lumi-doc>
+@title: Documento Inline
+
+# Título
+Conteúdo **Lumi** dentro do HTML.
+</lumi-doc>
+```
+
+### Uso programático
+
+O compilador pode ser usado diretamente via JavaScript:
+
+```javascript
+const compiler = new LumiCompiler();
+const { title, lang, headElements, body } = compiler.compile(`
+@title: Teste
+# Olá
+Isso é um **teste**.
+`);
+
+console.log(body);
+// <h1>Olá</h1>
+// <p>Isso é um <strong>teste</strong>.</p>
+```
+
+### Meta-diretivas no navegador
+
+As diretivas `@title` e `@lang` atualizam a página automaticamente.
+`@font` e `@css` injetam os recursos no `<head>` do documento.
+
+### Diferenças entre LumiC e LumiJS
+
+| Característica       | LumiC (C++)              | LumiJS (JavaScript)       |
+|----------------------|--------------------------|---------------------------|
+| Localização          | `lumic/src/`             | `lumi-js/`                |
+| Ambiente             | Linha de comando         | Navegador                 |
+| Pré-compilação       | Necessária               | Não necessária            |
+| Saída                | Arquivo `.html`          | DOM renderizado           |
+| Dependências         | C++17                    | Nenhuma                   |
+| Sintaxe suportada    | Completa                 | Completa                  |
+
+Para documentação detalhada, consulte o [README do LumiJS](lumi-js/README.md).
+
+---
+
 ## Guia do Desenvolvedor
 
 ### Visão Geral da Arquitetura
 
 ```
-src/
-├── compiler.h      Interface pública da classe LumiCompiler
-├── compiler.cpp    Implementação do compilador
-└── main.cpp        Ponto de entrada e parsing da CLI
+Lumi/
+├── lumic/                  Compilador C++ (CLI)
+│   └── src/
+│       ├── compiler.h      Interface pública da classe LumiCompiler
+│       ├── compiler.cpp    Implementação do compilador
+│       └── main.cpp        Ponto de entrada e parsing da CLI
+├── lumi-js/                Compilador JavaScript (Navegador)
+│   ├── lumi-js.js          Compilador + Web Component
+│   └── README.md           Documentação do LumiJS
+├── styles/                 Folhas de estilo
+├── examples/               Documentos de exemplo
+└── assets/                 Imagens e recursos
 ```
 
-O compilador é uma **classe stateful** que reinicia seu estado a cada chamada
-de `compile()`. Isso permite reutilizá-la para múltiplos arquivos no mesmo
-processo.
-
-### Pipeline de Compilação
+### Pipeline de Compilação (LumiC)
 
 ```
 Fonte .lm
@@ -544,7 +660,34 @@ novamente por `processInline`, permitindo aninhamento.
                └─ emite <strong><em>negrito e itálico</em></strong>
 ```
 
-### Adicionando um Novo Elemento Inline
+### Pipeline de Compilação (LumiJS)
+
+O LumiJS segue a mesma lógica do LumiC, adaptada para JavaScript:
+
+```
+Fonte .lm (string ou arquivo)
+    │
+    ▼
+LumiCompiler.compile()
+    │  Separa linhas, extrai notas de rodapé
+    │  Processa meta-diretivas (@title, @lang, @font, @css)
+    │  Agrupa linhas em blocos (parágrafo, lista, tabela, etc.)
+    │  Processa cada bloco → HTML
+    │  Processa marcação inline (negrito, itálico, links, etc.)
+    │  Gera notas de rodapé
+    ▼
+Objeto { title, lang, headElements, body }
+    │
+    ▼
+LumiDoc (Web Component)
+    │  Aplica title e lang ao documento
+    │  Injeta fontes e CSS no <head>
+    │  Renderiza body no DOM
+    ▼
+Página renderizada
+```
+
+### Adicionando um Novo Elemento Inline (LumiC)
 
 1. Escolha os delimitadores de abertura e fechamento (ex.: `%%text%%`).
 2. Em `compiler.cpp`, dentro do loop `while (i < n)` em `processInline()`,
@@ -567,7 +710,7 @@ Os parâmetros de `tryWrap`:
 
 3. Documente o novo elemento na seção "Ênfases Inline" deste README.
 
-### Adicionando um Novo Elemento de Bloco
+### Adicionando um Novo Elemento de Bloco (LumiC)
 
 1. Defina o prefixo de linha que identifica o bloco (ex.: `!! ` para avisos).
 2. Em `processBlocks()`, adicione a detecção **antes** da regra de parágrafo
@@ -589,7 +732,7 @@ função `processXxx(buffer)` seguindo o padrão dos existentes.
 
 3. Adicione uma entrada na tabela de referência e um exemplo neste README.
 
-### Adicionando uma Nova Diretiva Meta
+### Adicionando uma Nova Diretiva Meta (LumiC)
 
 Em `parseMeta()`, dentro do bloco `if (colon != std::string::npos)`:
 
@@ -603,7 +746,7 @@ Depois use `m_author` em `generateHead()` para emitir, por exemplo:
 h += "  <meta name=\"author\" content=\"" + escapeHtml(m_author) + "\">\n";
 ```
 
-### Estrutura de Dados
+### Estrutura de Dados (LumiC)
 
 ```
 LumiCompiler
@@ -629,7 +772,8 @@ LumiCompiler
 ### Compilação e Testes
 
 ```bash
-# Build
+# Build do LumiC
+cd lumic
 make
 
 # Converter o exemplo incluído
