@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 640" width="1280" height="640">
+  <defs>
+    <style>
+      .spiral { fill: none; stroke: #7dcfff; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+      .glow { fill: none; stroke: #7dcfff; stroke-width: 8; stroke-linecap: round; opacity: 0.15; }
+    </style>
+  </defs>
+
+  <!-- Glow -->
+  <path class="glow" d="
+    M 640 230
+    l 0 -8
+    a 8 8 0 0 1 8 -8
+    l 40 0
+    a 8 8 0 0 1 8 8
+    l 0 44
+    a 8 8 0 0 1 -8 8
+    l -60 0
+    a 8 8 0 0 1 -8 -8
+    l 0 -68
+    a 8 8 0 0 1 8 -8
+    l 84 0
+    a 8 8 0 0 1 8 8
+    l 0 92
+    a 8 8 0 0 1 -8 8
+    l -108 0
+    a 8 8 0 0 1 -8 -8
+    l 0 -116
+  "/>
+
+  <!-- Espiral principal -->
+  <path class="spiral" d="
+    M 640 230
+    l 0 -8
+    a 8 8 0 0 1 8 -8
+    l 40 0
+    a 8 8 0 0 1 8 8
+    l 0 44
+    a 8 8 0 0 1 -8 8
+    l -60 0
+    a 8 8 0 0 1 -8 -8
+    l 0 -68
+    a 8 8 0 0 1 8 -8
+    l 84 0
+    a 8 8 0 0 1 8 8
+    l 0 92
+    a 8 8 0 0 1 -8 8
+    l -108 0
+    a 8 8 0 0 1 -8 -8
+    l 0 -116
+    a 8 8 0 0 1 8 -8
+    l 132 0
+    a 8 8 0 0 1 8 8
+    l 0 140
+    a 8 8 0 0 1 -8 8
+    l -156 0
+    a 8 8 0 0 1 -8 -8
+  "/>
+
+  <!-- Ponto inicial da espiral -->
+  <circle cx="640" cy="230" r="4" fill="#7dcfff" opacity="0.9"/>
+
+  <!-- LUMI -->
+  <text x="640" y="420" text-anchor="middle" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="48" font-weight="700" letter-spacing="12" fill="#7dcfff" opacity="0.85">LUMI</text>
+
+  <!-- Tagline -->
+  <text x="640" y="452" text-anchor="middle" font-family="'Inter', 'Segoe UI', system-ui, sans-serif" font-size="13" font-weight="400" letter-spacing="4" fill="#565f89">LIGHTWEIGHT UNIFIED MARKUP INTERFACE</text>
+</svg>
